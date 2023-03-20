@@ -102,6 +102,15 @@
     font-weight: bold;
     margin-top: 1rem;
     transition: filter 0.2s;
+    cursor: pointer;
+}
+
+
+.commentForm > footer > button:disabled{
+    /* background: var(--gray-900); */
+    filter: brightness(0.4);
+    cursor: not-allowed;
+    transition: filter 0.5s;
 }
 
 .commentList{

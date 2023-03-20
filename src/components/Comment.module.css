@@ -69,6 +69,11 @@
     align-items: center;
 }
 
+.trash:focus{
+    box-shadow: none;
+    color: var(--red-500);
+}
+
 .commentBox footer button:hover{
     color: var(--green-300);
 }

@@ -3,7 +3,9 @@
     height: 80px;
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: 1.25rem 0;
+    gap: .3rem;
 }
 
 .header > img{

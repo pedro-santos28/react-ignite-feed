@@ -1,43 +1,93 @@
 import styles from './Post.module.css'
 import {Avatar} from '../components/Avatar'
 import { Comment } from '../components/Comment';
+import { dateFormated, relativeDateFormated } from '../utils/formattingData';
+import { FormEvent, useState } from 'react';
+import { callApi } from '../services/Axios';
 
-export function Post(){
+export interface IPost {
+    id: number,
+    content: string,
+    publishedAt: Date,
+    author: {
+        id: number,
+        avatarUrl: string,
+        name: string,
+        role: string
+    }
+    comments?: Array<{
+        id: number,
+        content: string,
+        createdAt: Date,
+        authorId: number,
+        postId: number,
+    }>
+    mutate: () => void
+  }
+
+export function Post({mutate, id, content, publishedAt, author, comments} : IPost){
+
+    const publishedDateFormatted = dateFormated(publishedAt)
+    const publishedDateRelativeToNow = relativeDateFormated(publishedAt)
+
+    const [comment, setComment] = useState<string>('')
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        await callApi.post('comments', {
+            content: comment,
+            postId: id
+        })
+        setComment('')
+        mutate()
+    }
+
+    const isNewCommentEmpty = comment.length === 0
+
     return (
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar />
+                    <Avatar avatarUrl={author?.avatarUrl} />
                     <div className={styles.authorInfo}>
-                        <strong className={styles.name}>Bink</strong>
-                        <span className={styles.role}>CEO do Sexo</span>
+                        <strong className={styles.name}>{author?.name}</strong>
+                        <span className={styles.role}>{author?.role}</span>
                     </div>
                 </div>
-                <time>Publicado à 1h</time>
+                <time title={publishedDateFormatted} >{publishedDateRelativeToNow}</time>
             </header>
 
+
             <div className={styles.content}>
-                <p>Fala galeraa 👋</p>
-                <p>Acabei de subir mais um projeto no meu portifa. É um projeto que fiz no NLW Return, evento da Rocketseat. O nome do projeto é DoctorCare 🚀</p>
-                <p> <a href="#"> 👉 jane.design/doctorcare </a></p>
-                <p> <a href="#"> #novoprojeto #nlw #rocketseat </a></p>
+                {content}
             </div>
 
-            <form className={styles.commentForm}>
+            <form className={styles.commentForm} onSubmit={handleSubmit}>
                 <strong>Deixe seu feedback</strong>
-                <textarea placeholder='Deixe um comentário' />
+                <textarea 
+                    onChange={(e) => {setComment(e.target.value)}} 
+                    placeholder='Deixe um comentário' 
+                    value={comment}
+                    />
                 <footer>
-                    <button type='submit'>Publicar</button>
+                    <button disabled={isNewCommentEmpty} type='submit'>Publicar</button>
                 </footer>
             </form>
 
             <div className={styles.commentList}>
-                <Comment 
-                    image='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1143&q=80'
-                    name='Bink'
-                    time='1 hora'
-                    comment='Muito bom, parabéns!'
-                />
+                {comments?.map((comment) => {
+                    return(
+                    <Comment 
+                        key={comment?.id}
+                        id={comment?.id}
+                        image='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1143&q=80'
+                        name='Bink'
+                        time={comment?.createdAt}
+                        comment={comment?.content}
+                        mutate={mutate}
+                    />
+                    )
+                })}
             </div>
         </article>
     )
