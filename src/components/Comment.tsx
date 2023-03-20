@@ -31,7 +31,7 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
 
     return (
         <div className={styles.comment}>
-            <Avatar hasBorder={false} avatarUrl={image} />
+            <Avatar hasBorder={false} src={image} />
             <div className={styles.commentBox}>
                 <div className={styles.commentContent}>
                     <header>

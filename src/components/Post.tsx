@@ -4,6 +4,7 @@ import { Comment } from '../components/Comment';
 import { dateFormated, relativeDateFormated } from '../utils/formattingData';
 import { FormEvent, useState } from 'react';
 import { callApi } from '../services/Axios';
+import { Trash } from '@phosphor-icons/react';
 
 export interface IPost {
     id: number,
@@ -42,22 +43,33 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
         mutate()
     }
 
+    const handleDeletePost = async () => {
+        await callApi.delete(`posts/${id}`)
+        mutate()
+    }
+
     const isNewCommentEmpty = comment.length === 0
 
     return (
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar avatarUrl={author?.avatarUrl} />
+                    <Avatar src={author?.avatarUrl} />
                     <div className={styles.authorInfo}>
                         <strong className={styles.name}>{author?.name}</strong>
                         <span className={styles.role}>{author?.role}</span>
                     </div>
                 </div>
-                <time title={publishedDateFormatted} >{publishedDateRelativeToNow}</time>
+
+                <div className={styles.rightContent}>
+                    <button title="Deletar Post" onClick={handleDeletePost}>
+                        <Trash className={styles.trash} size={20} />
+                    </button>
+                    
+                    <time title={publishedDateFormatted} >{publishedDateRelativeToNow}</time>
+                </div>
             </header>
-
-
+            
             <div className={styles.content}>
                 {content}
             </div>
