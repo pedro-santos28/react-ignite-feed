@@ -65,7 +65,6 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
                     <button title="Deletar Post" onClick={handleDeletePost}>
                         <Trash className={styles.trash} size={20} />
                     </button>
-                    
                     <time title={publishedDateFormatted} >{publishedDateRelativeToNow}</time>
                 </div>
             </header>
@@ -92,8 +91,8 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
                     <Comment 
                         key={comment?.id}
                         id={comment?.id}
-                        image='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1143&q=80'
-                        name='Bink'
+                        image={author?.avatarUrl}
+                        name={author?.name}
                         time={comment?.createdAt}
                         comment={comment?.content}
                         mutate={mutate}

@@ -19,7 +19,7 @@ export function App() {
     <div >
       <Header/>
       <div className={styles.wrapper}>
-        <Sidecard/>
+        <Sidecard mutate={mutate}/>
         
         <main>
           {posts?.map((post: IPost) => {

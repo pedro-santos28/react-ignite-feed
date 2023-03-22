@@ -1,0 +1,81 @@
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import FormControl from '@mui/material/FormControl';
+import { callApi } from '../services/Axios';
+import { ArrowLeft } from '@phosphor-icons/react';
+import styles from './ModalCreatePost.module.css'
+import {PlusSquare} from '@phosphor-icons/react'
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 500,
+  bgcolor: '#161619',
+  border: '2px solid #005f43',
+  boxShadow: 24,
+  p: 4,
+  display: 'Flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  aligmItems: 'center',
+  gap: "20px",
+  borderRadius: "10px"
+};
+
+type ModalCreatePostProps = {
+  mutate: () => void
+}
+
+export function ModalCreatePost({mutate} : ModalCreatePostProps) {
+  const [open, setOpen] = React.useState(false);
+  const [content, setContent] = React.useState("");
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleCreatePost = async () => {
+    await callApi.post("/posts", {content: content, authorId: 4})
+    handleClose()
+    mutate()
+  }
+
+  const handleBackClick = () => {
+    handleClose()
+  }
+ 
+  return (
+    <div>
+      <button className={styles.buttonBase} onClick={handleOpen}>
+      <PlusSquare size={20} />
+        Criar postagem</button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+        <ArrowLeft style={{cursor: "pointer"}} color='white' onClick={handleBackClick}/>
+          <h1 style={{textAlign: "center", color: "#005f43"}}>Crie uma nova postagem</h1>
+          <FormControl>
+            <label htmlFor="content">Conteúdo</label>
+            <textarea name="content" onChange={(e) => {setContent(e.target.value)}} id="content" title="Conteudo" 
+            style={{height: "100px", border:"1px solid black", borderRadius: "5px"}} />
+          </FormControl>
+
+          <button 
+            className={styles.buttonBase}
+            disabled={content.length === 0}
+            onClick={handleCreatePost} 
+              >
+                Salvar
+          </button>
+        </Box>  
+      </Modal>
+    </div>
+  );
+}

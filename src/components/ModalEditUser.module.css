@@ -1,0 +1,37 @@
+.buttonBase{
+    background: transparent;
+    color: var(--green-500);
+    border: 1px solid var(--green-500);
+    border-radius: 8px;
+    height: 50px;
+    padding: 0 1.5rem;
+    font-weight: bold;
+    display: block;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: color 0.1s, background-color 0.1s;
+    cursor: pointer;
+}
+
+.buttonBase:hover{
+    background: var(--green-500);
+    color: var(--white);
+}
+
+.block{
+    display: flex;
+    flex-direction: column;
+    gap:.2rem;
+    font-weight: 600;
+}
+
+.block input{
+    padding: 7px
+}
+
+.block + .block{
+    margin-top: 2rem;
+}

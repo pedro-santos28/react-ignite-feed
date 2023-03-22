@@ -1,8 +1,25 @@
-import { PencilLine } from '@phosphor-icons/react'
 import styles from './Sidebar.module.css'
 import {Avatar} from '../components/Avatar'
+import { ModalCreatePost } from './ModalCreatePost'
+import { ModalEditUser } from './ModalEditUser'
 
-export function Sidecard(){
+type SidecardProps = {
+    author?: {
+        id: number,
+        avatarUrl: string;
+        name: string;
+        role: string;
+    },
+    mutate: () => void
+}
+
+export function Sidecard({mutate} : SidecardProps){
+
+
+    const handleEditProfile = () => {
+
+    }
+
     return (
         <aside className={styles.sidebar}>
             <img className={styles.cover} src="https://images.unsplash.com/photo-1494256997604-768d1f608cac?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=50"  />
@@ -17,10 +34,8 @@ export function Sidecard(){
             </div>
 
             <footer className={styles.footer}>
-                <a href="#">
-                    <PencilLine size={20} />
-                    Editar seu perfil
-                </a>
+                <ModalEditUser mutate={mutate}/>
+                <ModalCreatePost mutate={mutate}/>
             </footer>
         </aside>
     )
