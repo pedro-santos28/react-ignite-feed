@@ -12,19 +12,27 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
 
     const publishedDateFormatted = dateFormated(publishedAt)
     const publishedDateRelativeToNow = relativeDateFormated(publishedAt)
-
     const [comment, setComment] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
     const {state} = useUserContext()
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        await callApi.post('comments', {
-            content: comment,
-            postId: id,
-            authorId: state.user?.id
-        })
-        setComment('')
-        mutate()
+        try{
+            setLoading(true)
+            e.preventDefault()
+            await callApi.post('comments', {
+                content: comment,
+                postId: id,
+                authorId: state.user?.id
+            })
+            setComment('')
+            mutate()
+        }catch(error){
+            console.log(error)
+        }finally{
+            setLoading(false)
+        }
+        
     }
 
     const handleDeletePost = async () => {
@@ -68,7 +76,7 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
                     value={comment}
                     />
                 <footer>
-                    <button disabled={isNewCommentEmpty} type='submit'>Publicar</button>
+                    <button disabled={isNewCommentEmpty || loading} type='submit'>Publicar</button>
                 </footer>
             </form>
 
