@@ -12,9 +12,6 @@ export function Home() {
         "/posts", fetcher
       );
 
-    console.log("posts")
-    console.log(posts)
-    
     if (error) return <div>An error has occurred.</div>;
     if (isLoading) return <div>Loading...</div>;
 

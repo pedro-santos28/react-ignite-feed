@@ -1,5 +1,4 @@
 import styles from './Header.module.css'
-import igniteLogo from '../assets/igniteLlogo.svg'
 import {SignOut} from '@phosphor-icons/react'
 import { useUserContext } from '../context/UserContext'
 
@@ -17,11 +16,9 @@ export function Header(){
         window.location.reload()
     }
 
-    console.log(state?.isAuthenticated)
-
     return (
         <header className={styles.header}>
-            <img src={igniteLogo} alt="Logotipo do ignite" />
+            <img src='/public/igniteLogo.svg' alt="Logotipo do ignite" />
             <strong>Ignite Feed</strong>
             {state?.isAuthenticated ?
             ( 
