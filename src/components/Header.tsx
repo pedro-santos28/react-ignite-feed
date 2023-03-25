@@ -1,5 +1,5 @@
 import styles from './Header.module.css'
-import igniteLogo from '../assets/igniteLogo.svg'
+import igniteLogo from '../assets/IgniteLogo.svg'
 import {SignOut} from '@phosphor-icons/react'
 import { useUserContext } from '../context/UserContext'
 
