@@ -6,8 +6,20 @@
     align-items: center;
     padding: 1.25rem 0;
     gap: .3rem;
+    position: relative;
 }
 
 .header > img{
     height: 2rem;
+}
+
+.signout{
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    cursor: pointer;
+}
+
+.signout:hover{
+    color: var(--red-500);
 }

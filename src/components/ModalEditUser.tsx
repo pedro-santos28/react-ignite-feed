@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import FormControl from '@mui/material/FormControl';
 import { callApi } from '../services/Axios';
 import { ArrowLeft, PencilLine } from '@phosphor-icons/react';
 import styles from './ModalEditUser.module.css'
+import { useUserContext } from '../context/UserContext';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -27,21 +27,41 @@ const style = {
 
 type ModalEditUserProps = {
   mutate: () => void
+  authorId?: number
 }
 
-export function ModalEditUser({mutate} : ModalEditUserProps) {
+export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
   const [role, setRole] = React.useState("");
-  const [avatar, setAvatar] = React.useState("");
+  const [avatarUrl, setAvatarUrl] = React.useState("");
+  const [bannerUrl, setBannerUrl] = React.useState("");
+  const [loading, setLoading] = React.useState(false)
+
+  const {state} = useUserContext()
+  
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleEditUserProfile = async () => {
-    await callApi.put(`/users/${4}`, {name, role, avatarUrl: avatar})
-    handleClose()
-    mutate()
+    setLoading(true)
+    try{
+      const treatedName = name.length > 0 ? name : state.user?.name
+      const treatedRole = role.length > 0 ? role : state.user?.role
+      const treatedAvatarUrl = avatarUrl.length > 0 ? avatarUrl : state.user?.avatarUrl
+      const treatedBannerUrl = bannerUrl.length > 0 ? bannerUrl : state.user?.bannerUrl
+  
+      const data = await callApi.put(`/users/${authorId}`, {treatedName, treatedRole, treatedAvatarUrl, treatedBannerUrl})
+      state.setUser(data.data)
+      handleClose()
+      mutate()
+    }catch(error){
+      console.log(error)
+    }finally{
+      setLoading(false)
+    }
+   
   }
 
   const handleBackClick = () => {
@@ -50,7 +70,6 @@ export function ModalEditUser({mutate} : ModalEditUserProps) {
  
   return (
     <div>
-
       <button onClick={handleOpen}>
         <PencilLine size={20} />
             Editar seu perfil
@@ -68,21 +87,30 @@ export function ModalEditUser({mutate} : ModalEditUserProps) {
           <FormControl>
             <div className={styles.block}>
               <label htmlFor="name">Nome</label>
-              <input name="nome" onChange={(e) => {setName(e.target.value)}} id="name" title="Nome" />
+              <input defaultValue={state.user?.name} name="nome" onChange={(e) => {setName(e.target.value)}} id="name" title="Nome" />
             </div>
+
             <div className={styles.block}>
               <label htmlFor="role">Cargo</label>
-              <input name="role" onChange={(e) => {setRole(e.target.value)}} id="role" title="Cargo" />
+              <input defaultValue={state.user?.role} name="role" onChange={(e) => {setRole(e.target.value)}} id="role" title="Cargo" />
             </div>
+            
             <div className={styles.block}>
-              <label htmlFor="name">Avatar</label>
-              <input name="avatar" onChange={(e) => {setAvatar(e.target.value)}} type="input" title="Avatar" />
+              <label htmlFor="avatarUrl">Avatar Url</label>
+              <input defaultValue={state.user?.avatarUrl} id="avatarUrl" onChange={(e) => {setAvatarUrl(e.target.value)}} type="input" title="Avatar Url" />
+            </div>
+
+            <div className={styles.block}>
+              <label htmlFor="bannerUrl">Banner Url</label>
+              <input defaultValue={state.user?.bannerUrl} id="bannerUrl" onChange={(e) => {setBannerUrl(e.target.value)}} type="input" title="Banner Url" />
             </div>
           </FormControl>
 
           <button 
             className={styles.buttonBase}
-            onClick={handleEditUserProfile}>
+            onClick={handleEditUserProfile}
+            disabled={loading}
+            >
                 Salvar
           </button>
         </Box>  

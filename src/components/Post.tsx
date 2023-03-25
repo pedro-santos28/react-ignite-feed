@@ -5,26 +5,8 @@ import { dateFormated, relativeDateFormated } from '../utils/formattingData';
 import { FormEvent, useState } from 'react';
 import { callApi } from '../services/Axios';
 import { Trash } from '@phosphor-icons/react';
-
-export interface IPost {
-    id: number,
-    content: string,
-    publishedAt: Date,
-    author: {
-        id: number,
-        avatarUrl: string,
-        name: string,
-        role: string
-    }
-    comments?: Array<{
-        id: number,
-        content: string,
-        createdAt: Date,
-        authorId: number,
-        postId: number,
-    }>
-    mutate: () => void
-  }
+import { IPost } from '../types/PostType/types';
+import { useUserContext } from '../context/UserContext';
 
 export function Post({mutate, id, content, publishedAt, author, comments} : IPost){
 
@@ -32,12 +14,14 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
     const publishedDateRelativeToNow = relativeDateFormated(publishedAt)
 
     const [comment, setComment] = useState<string>('')
+    const {state} = useUserContext()
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         await callApi.post('comments', {
             content: comment,
-            postId: id
+            postId: id,
+            authorId: state.user?.id
         })
         setComment('')
         mutate()
@@ -49,12 +33,13 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
     }
 
     const isNewCommentEmpty = comment.length === 0
+    const defaultAvatar = 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8Z2F0b3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'
 
     return (
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar src={author?.avatarUrl} />
+                    <Avatar src={author?.avatarUrl ? author.avatarUrl : defaultAvatar} />
                     <div className={styles.authorInfo}>
                         <strong className={styles.name}>{author?.name}</strong>
                         <span className={styles.role}>{author?.role}</span>
@@ -62,9 +47,11 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
                 </div>
 
                 <div className={styles.rightContent}>
-                    <button title="Deletar Post" onClick={handleDeletePost}>
+                    {state.user?.isAdmin ? (
+                        <button title="Deletar Post" onClick={handleDeletePost}>
                         <Trash className={styles.trash} size={20} />
                     </button>
+                    ) : null}
                     <time title={publishedDateFormatted} >{publishedDateRelativeToNow}</time>
                 </div>
             </header>
@@ -91,8 +78,8 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
                     <Comment 
                         key={comment?.id}
                         id={comment?.id}
-                        image={author?.avatarUrl}
-                        name={author?.name}
+                        image={comment.author.avatarUrl}
+                        name={comment.author.name}
                         time={comment?.createdAt}
                         comment={comment?.content}
                         mutate={mutate}

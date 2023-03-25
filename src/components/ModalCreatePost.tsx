@@ -28,25 +28,35 @@ const style = {
 
 type ModalCreatePostProps = {
   mutate: () => void
+  authorId?: number
 }
 
-export function ModalCreatePost({mutate} : ModalCreatePostProps) {
+
+export function ModalCreatePost({mutate, authorId} : ModalCreatePostProps) {
+
   const [open, setOpen] = React.useState(false);
   const [content, setContent] = React.useState("");
+  const [loading, setLoading] = React.useState(false)
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleCreatePost = async () => {
-    await callApi.post("/posts", {content: content, authorId: 4})
-    handleClose()
-    mutate()
+    setLoading(true)
+    try{
+      await callApi.post("/posts", {content: content, authorId})
+      handleClose()
+      mutate()
+    }catch(error){
+      console.log(error)
+    }finally{
+      setLoading(false)
+    }
   }
 
   const handleBackClick = () => {
     handleClose()
   }
- 
   return (
     <div>
       <button className={styles.buttonBase} onClick={handleOpen}>
@@ -69,7 +79,7 @@ export function ModalCreatePost({mutate} : ModalCreatePostProps) {
 
           <button 
             className={styles.buttonBase}
-            disabled={content.length === 0}
+            disabled={content.length === 0 || loading}
             onClick={handleCreatePost} 
               >
                 Salvar
