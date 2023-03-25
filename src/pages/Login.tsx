@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { callApi } from '../services/Axios'
 import styles from './Login.module.css'
 import {useUserContext} from "../context/UserContext"
@@ -15,9 +15,9 @@ export const Login = () => {
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
+    setLoading(true)
     try {
+      event.preventDefault()
       const data = await callApi.post('/login', {
         email,
         password,
@@ -40,7 +40,7 @@ export const Login = () => {
       console.log(error)
     }
     finally{
-      setLoading(true)
+      setLoading(false)
     }
   }
 

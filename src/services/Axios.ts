@@ -14,5 +14,3 @@ export const fetcher = (url : string) => callApi(url).then(
   )
 
 
-
-

@@ -19,10 +19,18 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
 
     const {state} = useUserContext()
     const [likeCount, setLikeCount] = useState<number>(0)
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleDeleteComment = async () => {
-        await callApi.delete(`comments/${id}`)
-        mutate()
+        setLoading(true)
+        try{
+            await callApi.delete(`comments/${id}`)
+            mutate()
+        }catch(error){
+            console.log(error)
+        }finally{
+            setLoading(false)
+        }
     }
 
     const handleLikeComment = () => {
@@ -44,8 +52,8 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
                         </div>
 
                         {state.user?.isAdmin ? (
-                            <button className={styles.trash} title="Deletar comentário" onClick={handleDeleteComment}>
-                            <Trash  size={20} />
+                            <button disabled={loading} className={styles.trash} title="Deletar comentário" onClick={handleDeleteComment}>  
+                            <Trash size={20} />
                         </button>
                         ) : null}
                         

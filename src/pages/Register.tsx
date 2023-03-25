@@ -17,7 +17,7 @@ export const Register = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const passwordIsValid = password === passwordConfirmation
-
+    setLoading(true)
     try {
       if (!passwordIsValid) {
         throw new Error('Senhas não conferem')
@@ -38,8 +38,7 @@ export const Register = () => {
       
       setTimeout(() => {
         navigate('/login')
-      }, 3000)
-      
+      }, 700)
 
     }catch(error: any) {
       toast.error(error.message, {
@@ -47,7 +46,7 @@ export const Register = () => {
       })
     }
     finally{
-      setLoading(true)
+      setLoading(false)
     }
   }
 

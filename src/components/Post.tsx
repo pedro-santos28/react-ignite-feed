@@ -36,8 +36,15 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
     }
 
     const handleDeletePost = async () => {
-        await callApi.delete(`posts/${id}`)
-        mutate()
+        setLoading(true)
+        try{
+            await callApi.delete(`posts/${id}`)
+            mutate()
+        }catch(error){
+            console.log(error)
+        }finally{
+            setLoading(false)
+        }
     }
 
     const isNewCommentEmpty = comment.length === 0
@@ -56,7 +63,7 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
 
                 <div className={styles.rightContent}>
                     {state.user?.isAdmin ? (
-                        <button title="Deletar Post" onClick={handleDeletePost}>
+                        <button disabled={loading} title="Deletar Post" onClick={handleDeletePost}>
                         <Trash className={styles.trash} size={20} />
                     </button>
                     ) : null}
