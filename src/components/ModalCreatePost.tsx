@@ -13,7 +13,6 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 500,
   bgcolor: '#161619',
   border: '2px solid #005f43',
   boxShadow: 24,
@@ -23,7 +22,9 @@ const style = {
   justifyContent: 'center',
   aligmItems: 'center',
   gap: "20px",
-  borderRadius: "10px"
+  borderRadius: "10px",
+  maxWidth: "500px",
+  width: "100%"
 };
 
 type ModalCreatePostProps = {
@@ -63,6 +64,7 @@ export function ModalCreatePost({mutate, authorId} : ModalCreatePostProps) {
       <PlusSquare size={20} />
         Criar postagem</button>
       <Modal
+        style={{padding: "20px", margin: "10px"}}
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"

@@ -33,13 +33,13 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
     }
 
     const isNewCommentEmpty = comment.length === 0
-    const defaultAvatar = 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8Z2F0b3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'
+    const defaultUserImage = 'https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg'
 
     return (
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar src={author?.avatarUrl ? author.avatarUrl : defaultAvatar} />
+                    <Avatar src={author?.avatarUrl ? author.avatarUrl : defaultUserImage} />
                     <div className={styles.authorInfo}>
                         <strong className={styles.name}>{author?.name}</strong>
                         <span className={styles.role}>{author?.role}</span>

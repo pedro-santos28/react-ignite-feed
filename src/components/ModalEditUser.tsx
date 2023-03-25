@@ -12,7 +12,6 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 500,
   bgcolor: '#161619',
   border: '2px solid #005f43',
   boxShadow: 24,
@@ -22,7 +21,9 @@ const style = {
   justifyContent: 'center',
   aligmItems: 'center',
   gap: "20px",
-  borderRadius: "10px"
+  borderRadius: "10px",
+  maxWidth: "500px",
+  width: "100%"
 };
 
 type ModalEditUserProps = {
@@ -40,7 +41,6 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
 
   const {state} = useUserContext()
   
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -77,6 +77,7 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
       
       <Modal
         open={open}
+        style={{padding: "20px", margin: "10px"}}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
