@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { callApi } from '../services/Axios'
 import styles from './Register.module.css'
 import { z } from "zod";
+import { useForm } from 'react-hook-form'
 
 export const Register = () => {
 
@@ -31,39 +32,28 @@ export const Register = () => {
 
   type formDataType = z.infer<typeof formData>;
 
-  const navigate = useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<formDataType>();
 
-  const [name, setName] = useState<formDataType['name']>('')
-  const [email, setEmail] = useState<formDataType['email']>('')
-  const [password, setPassword] = useState<formDataType['password']>('')
-  const [passwordConfirmation, setPasswordConfirmation] = useState<formDataType['passwordConfirmation']>('')
-  const [formError, setFormError] = useState<string>('');
+  const navigate = useNavigate()
+ 
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const formDataToValidate = {
-      name,
-      email,
-      password,
-      passwordConfirmation,
-    };
-
+  const onSubmit = async (data: any) => {
     setLoading(true)
+    const {name, email, password, passwordConfirmation} = data
     try {
-      formData.parse(formDataToValidate);
-      setFormError('');
+      formData.parse({name, email, password, passwordConfirmation});
 
       await callApi.post('/signin', {
         name,
         email,
         password,
       })
-      setName('')
-      setEmail('')
-      setPassword('')
-      setPasswordConfirmation('')
+      
       toast.success("Conta criada com sucesso", {
         autoClose: 2400,
       })
@@ -73,7 +63,7 @@ export const Register = () => {
       }, 700)
 
     }catch(error: any) {
-      if(error.response.data.message.meta.target[0]){
+      if(error.response?.data?.message.meta.target[0]){
         toast.error("Este email já está sendo utilizado", {
           autoClose: 2400,
         })
@@ -84,7 +74,6 @@ export const Register = () => {
           autoClose: 2400,
         })
       }
-     
     }
     finally{
       setLoading(false)
@@ -93,26 +82,59 @@ export const Register = () => {
 
   return (
     <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
       <h1>Registre-se abaixo</h1>
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="name">Nome</label>
-          <input className={styles.input} id='name' type="text" placeholder='Digite seu nome' onChange={(e) => setName(e.target.value)}/>
+          <label 
+            className={styles.label} 
+            htmlFor="name"
+          >Nome
+          </label>
+
+          <input 
+            className={styles.input} 
+            id='name' 
+            type="text" 
+            placeholder='Digite seu nome' 
+            {...register('name')}/>
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="">Email</label>
-          <input className={styles.input} type="email" placeholder='Digite seu email' onChange={(e) => setEmail(e.target.value)}/>
+          <label 
+          className={styles.label} 
+          htmlFor="">Email</label>
+
+          <input 
+            className={styles.input} 
+            type="email" 
+            placeholder='Digite seu email' 
+            {...register('email')}/>
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="password">Senha</label>
-          <input className={styles.input} id="password" type="password" placeholder='Digite sua senha' onChange={(e) => setPassword(e.target.value)}/>
+          <label 
+            className={styles.label} 
+            htmlFor="password">Senha</label>
+
+          <input 
+            className={styles.input} 
+            id="password" 
+            type="password" 
+            placeholder='Digite sua senha' 
+            {...register('password')}/>
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="passwordConfirmation">Confirmação de senha</label>
-          <input className={styles.input} id="passwordConfirmation" type="password" placeholder='Confirme sua senha' onChange={(e) => setPasswordConfirmation(e.target.value)}/>
+          <label 
+          className={styles.label} 
+          htmlFor="passwordConfirmation">Confirmação de senha</label>
+
+          <input 
+            className={styles.input} 
+            id="passwordConfirmation" 
+            type="password" 
+            placeholder='Confirme sua senha' 
+            {...register('passwordConfirmation')}/>
         </div>
         <div className={styles.field}> 
           <button disabled={loading} type='submit'>Criar conta</button>
