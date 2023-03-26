@@ -2,7 +2,7 @@ import {useState} from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { callApi } from '../services/Axios';
-import { ArrowLeft, PencilLine } from '@phosphor-icons/react';
+import { ArrowLeft, Check, Pencil, PencilLine, Trash } from '@phosphor-icons/react';
 import styles from './ModalEditUser.module.css'
 import { useUserContext } from '../context/UserContext';
 import { ModalEditUserProps, UserFormInput } from '../types/EditUserTypes/EditUserTypes';
@@ -30,17 +30,19 @@ const style = {
 export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false)
-
-  
   const {state} = useUserContext()
   const {
     register,
+    setValue,
+    watch,
     handleSubmit,
-    formState: { errors, isLoading },
+    formState: { errors },
   } = useForm<UserFormInput>();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const avatarFile = watch('avatarFile');
+  const bannerFile = watch('bannerFile');
 
   const onSubmit = async (data: UserFormInput) => {
     const { name, role, avatarFile, bannerFile } = data;
@@ -49,15 +51,23 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
       const formData = new FormData();
       formData.append("name", name ? name as string : state.user?.name as string);
       formData.append("role", role ? role as string : state.user?.role as string);
-      formData.append("avatarFile", avatarFile[0]);
-      formData.append("bannerFile", bannerFile[0]);
+
+      if(avatarFile){
+        formData.append("avatarFile", avatarFile[0]);
+      }
+      if(bannerFile){
+        formData.append("bannerFile", bannerFile[0]);
+      }
 
       const data = await callApi.put(`/users/${authorId}`, formData,
         {headers: { "Content-Type": "multipart/form-data" }
       })
+      
       state.setUser(data.data)
       handleClose()
       mutate()
+      setValue('avatarFile', null as any)
+      setValue('bannerFile', null as any)
     }catch(error){
       console.log(error)
     }finally{
@@ -86,7 +96,7 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
         <Box sx={style}>
         <ArrowLeft style={{cursor: "pointer"}} color='white' onClick={handleBackClick}/>
           <h1 style={{textAlign: "center", color: "#005f43"}}>Edite seu perfil</h1>
-          <form onSubmit={handleSubmit(onSubmit)} encType='multipart/form-data'>
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.form} encType='multipart/form-data'>
             <div className={styles.block}>
               <label htmlFor="name">Nome</label>
               <input 
@@ -105,30 +115,60 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
                 title="Cargo" />
             </div>
             
-            <div className={styles.block}>
-              <label htmlFor="avatarFile">Avatar Url</label>
+            <div className={`${styles.block}`}>
+              <label htmlFor="avatarFile">
+                <span>Avatar Url</span>
+                {avatarFile?.length > 0 ? 
+                (
+                  <div className={styles.editFile}> 
+                    <Check size={22} />
+                  </div>
+                ) : (
+                  <div className={styles.editFile}> 
+                  <Pencil size={22} />
+                  </div>
+                )}
+                
+              </label>
+              {avatarFile?.length > 0 ? (<p className={styles.deleteFile} onClick={() => setValue('avatarFile', null as any) }>Deletar arquivo</p>) : null}
               <input 
                 defaultValue={state.user?.avatarFile} 
                 id="avatarFile" 
                 {...register('avatarFile')}
                 type="file" 
-                title="Avatar Url" />
+                title="Avatar Url" 
+                className={styles.inputFile}
+                />
             </div>
 
-            <div className={styles.block}>
-              <label htmlFor="bannerFile">Banner Url</label>
-              <input 
+            <div className={`${styles.block}`}>
+              <label htmlFor="bannerFile">
+                <span>Banner Url</span>
+                {bannerFile?.length > 0 ? 
+                <div className={styles.editFile}> 
+                    <Check size={22} />
+                </div> : 
+                (
+                <div className={styles.editFile}> 
+                  <Pencil size={22} />
+                </div>)}
+                
+              </label>
+              {bannerFile?.length > 0 ? (<p className={styles.deleteFile} onClick={() => setValue('bannerFile', null as any) }>Deletar arquivo</p>) : null}
+              <input
                 defaultValue={state.user?.bannerFile} 
                 id="bannerFile" 
                 {...register('bannerFile')}
                 type="file" 
-                title="Banner Url"/>
+                title="Banner Url"
+                className={styles.inputFile}
+                />
+                
             </div>
             <button 
-            className={styles.buttonBase}
-            disabled={isLoading}
-            type="submit"
-            >
+              className={styles.buttonBase}
+              disabled={loading}
+              type="submit">
                 Salvar
             </button>
           </form>

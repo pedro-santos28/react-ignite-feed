@@ -1,4 +1,10 @@
 
+.form{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
 .buttonBase{
     background: transparent;
     color: var(--green-500);
@@ -27,6 +33,7 @@
     flex-direction: column;
     gap:.2rem;
     font-weight: 600;
+    width: fit-content; 
 }
 
 .block input{
@@ -34,5 +41,41 @@
 }
 
 .block + .block{
-    margin-top: 2rem;
+    margin-top: 1rem;
+}
+
+.inputFile{
+    display: none;
+}
+
+.block > label{
+    width: fit-content;
+    display: flex;
+    gap: .3rem;
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.block > label > span{
+    padding: 0.5rem;
+}
+
+.icons{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    cursor: pointer;
+}
+
+.deleteFile{
+    color: var(--red-500);
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.editFile{
+    color: var(--green-500);
+    cursor: pointer;
 }
