@@ -18,7 +18,7 @@ export interface IUser {
     name: string,
     email: string,
     role: string,
-    avatarUrl: string
-    bannerUrl: string
+    avatarFile: string
+    bannerFile: string
     isAdmin: boolean
 }

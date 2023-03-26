@@ -1,11 +1,12 @@
-import * as React from 'react';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import FormControl from '@mui/material/FormControl';
 import { callApi } from '../services/Axios';
 import { ArrowLeft, PencilLine } from '@phosphor-icons/react';
 import styles from './ModalEditUser.module.css'
 import { useUserContext } from '../context/UserContext';
+import { ModalEditUserProps, UserFormInput } from '../types/EditUserTypes/EditUserTypes';
+import { useForm } from 'react-hook-form';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -26,33 +27,34 @@ const style = {
   width: "100%"
 };
 
-type ModalEditUserProps = {
-  mutate: () => void
-  authorId?: number
-}
-
 export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
-  const [open, setOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [role, setRole] = React.useState("");
-  const [avatarUrl, setAvatarUrl] = React.useState("");
-  const [bannerUrl, setBannerUrl] = React.useState("");
-  const [loading, setLoading] = React.useState(false)
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false)
 
-  const {state} = useUserContext()
   
+  const {state} = useUserContext()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isLoading },
+  } = useForm<UserFormInput>();
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleEditUserProfile = async () => {
+  const onSubmit = async (data: UserFormInput) => {
+    const { name, role, avatarFile, bannerFile } = data;
     setLoading(true)
     try{
-      const treatedName = name.length > 0 ? name : state.user?.name
-      const treatedRole = role.length > 0 ? role : state.user?.role
-      const treatedAvatarUrl = avatarUrl.length > 0 ? avatarUrl : state.user?.avatarUrl
-      const treatedBannerUrl = bannerUrl.length > 0 ? bannerUrl : state.user?.bannerUrl
-  
-      const data = await callApi.put(`/users/${authorId}`, {treatedName, treatedRole, treatedAvatarUrl, treatedBannerUrl})
+      const formData = new FormData();
+      formData.append("name", name ? name as string : state.user?.name as string);
+      formData.append("role", role ? role as string : state.user?.role as string);
+      formData.append("avatarFile", avatarFile[0]);
+      formData.append("bannerFile", bannerFile[0]);
+
+      const data = await callApi.put(`/users/${authorId}`, formData,
+        {headers: { "Content-Type": "multipart/form-data" }
+      })
       state.setUser(data.data)
       handleClose()
       mutate()
@@ -61,7 +63,6 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
     }finally{
       setLoading(false)
     }
-   
   }
 
   const handleBackClick = () => {
@@ -85,35 +86,54 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
         <Box sx={style}>
         <ArrowLeft style={{cursor: "pointer"}} color='white' onClick={handleBackClick}/>
           <h1 style={{textAlign: "center", color: "#005f43"}}>Edite seu perfil</h1>
-          <FormControl>
+          <form onSubmit={handleSubmit(onSubmit)} encType='multipart/form-data'>
             <div className={styles.block}>
               <label htmlFor="name">Nome</label>
-              <input defaultValue={state.user?.name} name="nome" onChange={(e) => {setName(e.target.value)}} id="name" title="Nome" />
+              <input 
+                defaultValue={state.user?.name} 
+                {...register('name')} 
+                id="name" 
+                title="Nome" />
             </div>
 
             <div className={styles.block}>
               <label htmlFor="role">Cargo</label>
-              <input defaultValue={state.user?.role} name="role" onChange={(e) => {setRole(e.target.value)}} id="role" title="Cargo" />
+              <input 
+                defaultValue={state.user?.role} 
+                {...register('role')}
+                id="role" 
+                title="Cargo" />
             </div>
             
             <div className={styles.block}>
-              <label htmlFor="avatarUrl">Avatar Url</label>
-              <input defaultValue={state.user?.avatarUrl} id="avatarUrl" onChange={(e) => {setAvatarUrl(e.target.value)}} type="input" title="Avatar Url" />
+              <label htmlFor="avatarFile">Avatar Url</label>
+              <input 
+                defaultValue={state.user?.avatarFile} 
+                id="avatarFile" 
+                {...register('avatarFile')}
+                type="file" 
+                title="Avatar Url" />
             </div>
 
             <div className={styles.block}>
-              <label htmlFor="bannerUrl">Banner Url</label>
-              <input defaultValue={state.user?.bannerUrl} id="bannerUrl" onChange={(e) => {setBannerUrl(e.target.value)}} type="input" title="Banner Url" />
+              <label htmlFor="bannerFile">Banner Url</label>
+              <input 
+                defaultValue={state.user?.bannerFile} 
+                id="bannerFile" 
+                {...register('bannerFile')}
+                type="file" 
+                title="Banner Url"/>
             </div>
-          </FormControl>
-
-          <button 
+            <button 
             className={styles.buttonBase}
-            onClick={handleEditUserProfile}
-            disabled={loading}
+            disabled={isLoading}
+            type="submit"
             >
                 Salvar
-          </button>
+            </button>
+          </form>
+
+          
         </Box>  
       </Modal>
     </div>

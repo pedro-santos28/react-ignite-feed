@@ -34,10 +34,15 @@ export const Login = () => {
       localStorage.setItem('user', JSON.stringify(data.data.userResponseDTO))
 
       navigate('/')
-      
     }
-    catch(error) {
+    catch(error: any) {
       console.log(error)
+      if(error.response.data.message === "Invalid credentials"){
+        toast.error('Credenciais inválidas')
+      }
+      else if(error.response.data.message === "User not found"){
+        toast.error('Usuário não encontrado')
+      }
     }
     finally{
       setLoading(false)
