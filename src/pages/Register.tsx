@@ -42,9 +42,10 @@ export const Register = () => {
  
   const [loading, setLoading] = useState(false)
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: formDataType) => {
     setLoading(true)
     const {name, email, password, passwordConfirmation} = data
+    
     try {
       formData.parse({name, email, password, passwordConfirmation});
 
