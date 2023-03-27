@@ -59,6 +59,8 @@
 
 .commentBox footer{
     margin-top: 1rem;
+    display: flex;
+    gap: .5rem;
 }
 .commentBox footer button{
     background: transparent;
@@ -74,9 +76,14 @@
     color: var(--red-500);
 }
 
-.commentBox footer button:hover{
+.commentBox > footer > .like:hover{
     color: white;
     font-weight: 500;
+}
+.commentBox > footer > .deslike:hover{
+    color: white;
+    font-weight: 500;
+    background-color: var(--red-500);
 }
 
 .commentBox footer button svg{

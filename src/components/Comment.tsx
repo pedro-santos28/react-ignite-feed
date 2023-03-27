@@ -1,5 +1,5 @@
 import styles from './Comment.module.css'
-import {Trash, ThumbsUp} from '@phosphor-icons/react'
+import {Trash, ThumbsUp, ThumbsDown} from '@phosphor-icons/react'
 import {Avatar} from '../components/Avatar'
 import { dateFormated } from '../utils/formattingData';
 import { callApi } from '../services/Axios';
@@ -19,6 +19,7 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
 
     const {state} = useUserContext()
     const [likeCount, setLikeCount] = useState<number>(0)
+    const [deslikeCount, setDeslikeCount] = useState<number>(0)
     const [loading, setLoading] = useState<boolean>(false)
 
     const handleDeleteComment = async () => {
@@ -35,6 +36,9 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
 
     const handleLikeComment = () => {
         setLikeCount((likeCount) => likeCount + 1)
+    }
+    const handleDeslikeComment = () => {
+        setDeslikeCount((deslikeCount) => deslikeCount + 1)
     }
 
     const commentDateFormatted = dateFormated(time)
@@ -61,10 +65,14 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
                     <p>{comment}</p>
                 </div>
                 <footer>
-                    <button onClick={handleLikeComment}>
+                    <button className={styles.like} onClick={handleLikeComment}>
                         <ThumbsUp  />
                         Like <span>{likeCount}</span>
-                        </button>
+                    </button>
+                    <button className={styles.deslike} onClick={handleDeslikeComment}>
+                        <ThumbsDown   />
+                        Deslike <span>{deslikeCount}</span>
+                    </button>
                 </footer>
             </div>
         </div>
