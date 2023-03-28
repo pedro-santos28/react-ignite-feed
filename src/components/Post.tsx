@@ -105,6 +105,8 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
                         name={comment.author.name}
                         time={comment?.createdAt}
                         comment={comment?.content}
+                        like={comment?.like}
+                        dislike={comment?.dislike}
                         mutate={mutate}
                     />
                     )

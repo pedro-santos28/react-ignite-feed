@@ -12,14 +12,16 @@ interface CommentProps {
     name: string;
     time: Date;
     comment?: string ;
+    like: number;
+    dislike: number;
     mutate: () => void
 }
 
-export function Comment({mutate, id, image, name, time, comment}: CommentProps){
+export function Comment({mutate, id, image, name, time, comment, like, dislike}: CommentProps){
 
     const {state} = useUserContext()
-    const [likeCount, setLikeCount] = useState<number>(0)
-    const [deslikeCount, setDeslikeCount] = useState<number>(0)
+    const [isLikePressed, setIsLikePressed] = useState<boolean>(false)
+    const [isDislikePressed, setIsDislikePressed] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
 
     const handleDeleteComment = async () => {
@@ -38,11 +40,45 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
         }
     }
 
-    const handleLikeComment = () => {
-        setLikeCount((likeCount) => likeCount + 1)
+    const handlePressLike = async () => {
+        setIsLikePressed(!isLikePressed)
+        setIsDislikePressed(false)
+        setLoading(true)
+        try{
+            await callApi.put(`comments/${id}`, {
+                hasLiked: isLikePressed
+            }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${state.JWT}`
+                }
+            })
+            mutate()
+        }catch(error){
+            console.log(error)
+        }finally{
+            setLoading(false)
+        }
     }
-    const handleDeslikeComment = () => {
-        setDeslikeCount((deslikeCount) => deslikeCount + 1)
+    const handlePressDislike = async () => {
+        setIsDislikePressed(!isDislikePressed)
+        setIsLikePressed(false)
+        setLoading(true)
+        try{
+            await callApi.put(`comments/${id}`, {
+                hasDisliked: !isDislikePressed
+            }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${state.JWT}`
+                }
+            })
+            mutate()
+        }catch(error){
+            console.log(error)
+        }finally{
+            setLoading(false)
+        }
     }
 
     const commentDateFormatted = dateFormated(time)
@@ -69,13 +105,13 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
                     <p>{comment}</p>
                 </div>
                 <footer>
-                    <button className={styles.like} onClick={handleLikeComment}>
+                    <button disabled={loading} className={styles.like} onClick={handlePressLike}>
                         <ThumbsUp  />
-                        Like <span>{likeCount}</span>
+                        Like <span>{like}</span>
                     </button>
-                    <button className={styles.deslike} onClick={handleDeslikeComment}>
+                    <button disabled={loading} className={styles.dislike} onClick={handlePressDislike}>
                         <ThumbsDown   />
-                        Deslike <span>{deslikeCount}</span>
+                        Dislike <span>{dislike}</span>
                     </button>
                 </footer>
             </div>

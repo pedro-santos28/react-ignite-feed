@@ -13,6 +13,8 @@ export interface IPost {
         authorId: number,
         postId: number,
         author: IUser,
+        like: number,
+        dislike: number
     }>
     mutate: () => void
   }

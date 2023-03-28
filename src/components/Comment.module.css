@@ -80,7 +80,7 @@
     color: white;
     font-weight: 500;
 }
-.commentBox > footer > .deslike:hover{
+.commentBox > footer > .dislike:hover{
     color: white;
     font-weight: 500;
     background-color: var(--red-500);

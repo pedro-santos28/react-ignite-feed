@@ -14,6 +14,8 @@ export function Home() {
         "/posts", url => fetcher(url, { headers: { Authorization: `Bearer ${state.JWT}`} })
       );
 
+    console.log(posts)
+
     if (error) return <div>An error has occurred.</div>;
     if (isLoading) return <div>Loading...</div>;
 
