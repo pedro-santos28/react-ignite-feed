@@ -4,12 +4,14 @@ import { fetcher } from '../services/Axios'
 import { IPost } from '../types/PostType/types'; 
 import useSWR from "swr";
 import styles from './Home.module.css'
-
+import { useUserContext } from '../context/UserContext';
 
 export function Home() {
 
+    const { state } = useUserContext();
+
     const { data: posts, error, isLoading, mutate } = useSWR(
-        "/posts", fetcher
+        "/posts", url => fetcher(url, { headers: { Authorization: `Bearer ${state.JWT}`} })
       );
 
     if (error) return <div>An error has occurred.</div>;

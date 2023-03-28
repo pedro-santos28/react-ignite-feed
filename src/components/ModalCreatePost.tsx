@@ -1,12 +1,12 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import FormControl from '@mui/material/FormControl';
 import { callApi } from '../services/Axios';
 import { ArrowLeft } from '@phosphor-icons/react';
 import styles from './ModalCreatePost.module.css'
 import {PlusSquare} from '@phosphor-icons/react'
+import { useUserContext } from '../context/UserContext';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -38,6 +38,7 @@ export function ModalCreatePost({mutate, authorId} : ModalCreatePostProps) {
   const [open, setOpen] = React.useState(false);
   const [content, setContent] = React.useState("");
   const [loading, setLoading] = React.useState(false)
+  const {state} = useUserContext()
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -45,7 +46,13 @@ export function ModalCreatePost({mutate, authorId} : ModalCreatePostProps) {
   const handleCreatePost = async () => {
     setLoading(true)
     try{
-      await callApi.post("/posts", {content: content, authorId})
+      await callApi.post("/posts", {content: content, authorId},
+      { headers: 
+        {
+          Authorization: `Bearer ${state.JWT}`
+        }
+      }
+      )
       handleClose()
       mutate()
     }catch(error){

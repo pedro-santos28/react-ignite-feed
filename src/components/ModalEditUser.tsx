@@ -60,7 +60,11 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
       }
 
       const data = await callApi.put(`/users/${authorId}`, formData,
-        {headers: { "Content-Type": "multipart/form-data" }
+        {
+          headers: { 
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${state.JWT}` 
+          }
       })
       
       state.setUser(data.data)
@@ -117,7 +121,7 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
             
             <div className={`${styles.block}`}>
               <label htmlFor="avatarFile">
-                <span>Avatar Url</span>
+                <span>Avatar</span>
                 {avatarFile?.length > 0 ? 
                 (
                   <div className={styles.editFile}> 
@@ -143,7 +147,7 @@ export function ModalEditUser({mutate, authorId} : ModalEditUserProps) {
 
             <div className={`${styles.block}`}>
               <label htmlFor="bannerFile">
-                <span>Banner Url</span>
+                <span>Banner</span>
                 {bannerFile?.length > 0 ? 
                 <div className={styles.editFile}> 
                     <Check size={22} />

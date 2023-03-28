@@ -4,7 +4,6 @@ import { IProps, IUser, IUserContext } from '../types/UserContextType/types';
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
 
-
 export const UserContextProvider = ({ children }: IProps) => {
     const [isAuthenticated, setIsAuthenticated] = useState(JSON.parse(localStorage.getItem('auth') as string));
     const [JWT, setJWT] = useState(localStorage.getItem('token') || '');
@@ -20,20 +19,24 @@ export const UserContextProvider = ({ children }: IProps) => {
     };
 
     useEffect(() => {
-        const actualUser = JSON.parse(localStorage.getItem('user') as string)
-        const fetchUser = async () => {
-            const userFound: {data: IUser} = await callApi.get(`/users/${actualUser?.id}`)
-            setUser(userFound.data)
-        }
-        if(!actualUser || !isAuthenticated) {
+        if(!isAuthenticated) {
             setUser(null)
             setJWT('')
-            setIsAuthenticated(false)
-            localStorage.getItem('token') && localStorage.removeItem('token')
-            localStorage.getItem('auth') && localStorage.removeItem('auth')
-            localStorage.getItem('user') && localStorage.removeItem('user')
+            localStorage.removeItem('token')
+            localStorage.removeItem('auth')
+            localStorage.removeItem('user')
+        }else{
+            const actualUser = JSON.parse(localStorage.getItem('user') as string)
+            const fetchUser = async () => {
+                const userFound: {data: IUser} = await callApi.get(`/users/${actualUser?.id}`, { headers: 
+                    {
+                      Authorization: `Bearer ${JWT}`
+                    }
+                  })
+                setUser(userFound.data)
+            }
+            fetchUser()
         }
-        fetchUser()
     }, [])
 
     return (

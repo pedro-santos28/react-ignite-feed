@@ -9,8 +9,8 @@ export const callApi = axios.create({
   baseURL: url
 }); 
 
-export const fetcher = (url : string) => callApi(url).then(
+export const fetcher = (url : string, headers: any) => callApi(url, headers ).then(
   (res) => res.data
-  )
+)
 
 

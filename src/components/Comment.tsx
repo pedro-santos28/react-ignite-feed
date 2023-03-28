@@ -25,7 +25,11 @@ export function Comment({mutate, id, image, name, time, comment}: CommentProps){
     const handleDeleteComment = async () => {
         setLoading(true)
         try{
-            await callApi.delete(`comments/${id}`)
+            await callApi.delete(`comments/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${state.JWT}`
+                }
+            })
             mutate()
         }catch(error){
             console.log(error)

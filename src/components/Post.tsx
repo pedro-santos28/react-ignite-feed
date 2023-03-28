@@ -24,7 +24,11 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
                 content: comment,
                 postId: id,
                 authorId: state.user?.id
-            })
+            }, { headers: 
+                {
+                  Authorization: `Bearer ${state.JWT}`
+                }
+              })
             setComment('')
             mutate()
         }catch(error){
@@ -38,7 +42,11 @@ export function Post({mutate, id, content, publishedAt, author, comments} : IPos
     const handleDeletePost = async () => {
         setLoading(true)
         try{
-            await callApi.delete(`posts/${id}`)
+            await callApi.delete(`posts/${id}`, { headers: 
+                {
+                  Authorization: `Bearer ${state.JWT}`
+                }
+              })
             mutate()
         }catch(error){
             console.log(error)
