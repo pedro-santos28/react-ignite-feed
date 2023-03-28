@@ -42,7 +42,6 @@ export function Comment({mutate, id, image, name, time, comment, like, dislike}:
 
     const handlePressLike = async () => {
         setIsLikePressed(!isLikePressed)
-        setIsDislikePressed(false)
         setLoading(true)
         try{
             await callApi.put(`comments/${id}`, {
@@ -62,7 +61,6 @@ export function Comment({mutate, id, image, name, time, comment, like, dislike}:
     }
     const handlePressDislike = async () => {
         setIsDislikePressed(!isDislikePressed)
-        setIsLikePressed(false)
         setLoading(true)
         try{
             await callApi.put(`comments/${id}`, {
